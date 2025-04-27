@@ -27,49 +27,53 @@ Matemáticamente se expresa como: $a^2 + b^2 = c^2$, donde:
 
 # Create a function to draw the triangle
 def draw_triangle(a, b, c, side_to_calculate):
-    # Create figure and axis
-    fig, ax = plt.subplots(figsize=(6, 6))
-    
-    # Set aspect ratio to equal to ensure the triangle looks right
+    # Crear figura y ejes pequeños
+    fig, ax = plt.subplots(figsize=(1, 1))
     ax.set_aspect('equal')
-    
-    # Coordinates for the triangle
+
+    # Coordenadas del triángulo
     coords = np.array([[0, 0], [a, 0], [0, b]])
-    
-    # Draw the triangle
     triangle = Polygon(coords, fill=False, edgecolor='blue', linewidth=2)
     ax.add_patch(triangle)
-    
-    # Add the right angle symbol
-    ax.plot([0.2, 0.2], [0, 0.2], color='black', linewidth=1)
-    ax.plot([0, 0.2], [0.2, 0.2], color='black', linewidth=1)
-    
-    # Label the sides
-    # Side a (base)
+
+    # Símbolo de ángulo recto (ajustado para triángulos pequeños)
+    offset = min(a, b) * 0.12
+    ax.plot([offset, offset], [0, offset], color='black', linewidth=1)
+    ax.plot([0, offset], [offset, offset], color='black', linewidth=1)
+
+    # Margen para etiquetas (ajustado dinámicamente)
+    margin = max(a, b) * 0.15
+
+    # Etiqueta lado a (base)
+    a_label_y = -margin
     if side_to_calculate == 'a':
-        ax.text(a/2, -0.3, "a = ?", fontsize=14, ha='center', color='red')
+        ax.text(a / 2, a_label_y, "a = ?", fontsize=8, ha='center', color='red')
     else:
-        ax.text(a/2, -0.3, f"a = {a}", fontsize=14, ha='center')
-    
-    # Side b (height)
+        ax.text(a / 2, a_label_y, f"a = {a}", fontsize=8, ha='center')
+
+    # Etiqueta lado b (altura)
+    b_label_x = -margin
     if side_to_calculate == 'b':
-        ax.text(-0.3, b/2, "b = ?", fontsize=14, va='center', color='red')
+        ax.text(b_label_x, b / 2, "b = ?", fontsize=8, va='center', color='red', rotation=90)
     else:
-        ax.text(-0.3, b/2, f"b = {b}", fontsize=14, va='center')
-    
-    # Side c (hypotenuse)
+        ax.text(b_label_x, b / 2, f"b = {b}", fontsize=8, va='center', rotation=90)
+
+    # Etiqueta lado c (hipotenusa)
+    # Calcula el punto medio de la hipotenusa y ajusta la posición
+    c_label_x = a * 0.45 - margin * 0.2
+    c_label_y = b * 0.45 + margin * 0.2
     if side_to_calculate == 'c':
-        ax.text(a/2-0.2, b/2+0.2, "c = ?", fontsize=14, color='red')
+        ax.text(c_label_x, c_label_y, "c = ?", fontsize=8, color='red', rotation=-math.degrees(math.atan2(b, a))/2)
     else:
-        ax.text(a/2-0.2, b/2+0.2, f"c = {c}", fontsize=14)
-    
-    # Set limits and remove axis
-    margin = max(a, b) * 0.2
+        ax.text(c_label_x, c_label_y, f"c = {c:.2f}", fontsize=8, rotation=-math.degrees(math.atan2(b, a))/2)
+
+    # Ajustar límites y quitar ejes
     ax.set_xlim(-margin, a + margin)
     ax.set_ylim(-margin, b + margin)
     ax.axis('off')
-    
+
     return fig
+
 
 # Create columns for layout
 col1, col2 = st.columns([1, 1])
